@@ -7,6 +7,18 @@ import numbers
 import collections
 import cv2
 
+"""
+这部分代码就完成了四个事情：
+    随机缩放
+    随机旋转
+    随机corp
+    随机翻折
+    
+    再加一个测试集的缩放
+    一个归一化
+    一个to tensor
+"""
+
 def normalize(tensor, mean, std):
     """Normalize a ``torch.tensor``
 
@@ -123,7 +135,7 @@ class RandomResized(object):
 
 class TestResized(object):
     """Resize the given numpy.ndarray to the size for test.
-
+        测试集的resize方法
     Args:
         size: the size to resize.
     """
@@ -269,6 +281,7 @@ def crop(img, kpt, center, offset_left, offset_up, w, h):
     or_st_y = offset_up
     or_ed_y = offset_up + h
 
+    # 以下为考虑经过偏移后的中心点超出图像范围的情况，超出的部分全部用128填充。
     # the person_center is in left
     if offset_left < 0:
         st_x = -offset_left
@@ -316,7 +329,7 @@ class RandomCrop(object):
         """
         ratio_x = random.uniform(0, 1)
         ratio_y = random.uniform(0, 1)
-        x_offset = int((ratio_x - 0.5) * 2 * center_perturb_max)
+        x_offset = int((ratio_x - 0.5) * 2 * center_perturb_max)        # 在人物中心正负5的位置crop
         y_offset = int((ratio_y - 0.5) * 2 * center_perturb_max)
         center_x = center[0] + x_offset
         center_y = center[1] + y_offset

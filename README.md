@@ -59,4 +59,6 @@ python cpm_test.py
 ## Notice
 * The code of test is just used for visualization,you can change the code to test your own image on condition that you have trained another model "person-center-network"(similar to CPMs).
 * I hope that'll be helpful for you.
-
+***
+# Study CPM
+pytorch版CPM代码的简单阅读注释

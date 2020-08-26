@@ -10,9 +10,9 @@ from utils.utils import adjust_learning_rate as adjust_learning_rate
 from utils.utils import AverageMeter as AverageMeter
 from utils.utils import save_checkpoint as save_checkpoint
 from utils.utils import Config as Config
-import cpm_model
-import lsp_lspet_data
-import Mytransforms
+from . import cpm_model
+from . import lsp_lspet_data
+from . import Mytransforms
 
 
 def parse():
@@ -34,7 +34,11 @@ def parse():
 
 
 def construct_model(args):
-
+    '''
+    实例化模型，并将模型分发到多GPU上。
+    :param args:
+    :return:
+    '''
     model = cpm_model.CPM(k=14)
     # load pretrained model
     # state_dict = torch.load(args.pretrained)['state_dict']
@@ -89,7 +93,7 @@ def train_val(model, args):
     # train
     train_loader = torch.utils.data.DataLoader(
         lsp_lspet_data.LSP_Data('lspet', train_dir, 8,
-                Mytransforms.Compose([Mytransforms.RandomResized(),
+                Mytransforms.Compose([Mytransforms.RandomResized(),     # 这个cpmpose写得还蛮有意思的
                 Mytransforms.RandomRotate(40),
                 Mytransforms.RandomCrop(368),
                 Mytransforms.RandomHorizontalFlip(),
@@ -116,7 +120,7 @@ def train_val(model, args):
     batch_time = AverageMeter()
     data_time = AverageMeter()
     losses = AverageMeter()
-    losses_list = [AverageMeter() for i in range(6)]
+    losses_list = [AverageMeter() for i in range(6)]    # 6个loss
     end = time.time()
     iters = config.start_iters
     best_model = config.best_model
@@ -140,7 +144,7 @@ def train_val(model, args):
 
 
             heat1, heat2, heat3, heat4, heat5, heat6 = model(input_var, centermap_var)
-
+            # 使用intermedia supervise方法，计算每个阶段的loss
             loss1 = criterion(heat1, heatmap_var) * heat_weight
             loss2 = criterion(heat2, heatmap_var) * heat_weight
             loss3 = criterion(heat3, heatmap_var) * heat_weight
