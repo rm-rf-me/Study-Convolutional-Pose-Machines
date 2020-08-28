@@ -89,6 +89,7 @@ def test_example(model, img_path, center):
         t.sub_(m).div_(s)
 
     # center-map:368*368*1
+    # 注意这里的center map直接为在图像正中心的高斯分布
     centermap = np.zeros((368, 368, 1), dtype=np.float32)
     center_map = guassian_kernel(size_h=368, size_w=368, center_x=center[0], center_y=center[1], sigma=3)
     center_map[center_map > 1] = 1
